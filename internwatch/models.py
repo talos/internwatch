@@ -8,8 +8,6 @@ db = SQLAlchemy()
 
 class Posting(db.Model):
 
-  #__tablename__ = 'posting'
-
   id = db.Column(db.Integer, primary_key=True)
 
   title = db.Column(db.String())
@@ -33,3 +31,13 @@ class Posting(db.Model):
 
   def send_email(self):
     pass
+
+
+class CachedFeed(db.Model):
+
+  id = db.Column(db.Integer, primary_key=True)
+
+  date = db.Column(db.Date, default=datetime.date.today())
+
+  rss_url = db.Column(db.Text())
+  text = db.Column(db.Text())

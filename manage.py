@@ -1,14 +1,15 @@
 from flask.ext.script import Manager
 
 from app import app
-from internwatch.models import db, Posting
+from internwatch.models import db, Posting, CachedFeed
 
-from urlparse import urljoin
-from bs4 import BeautifulSoup
 import feedparser
 import requests
+import time
+from urlparse import urljoin
+from bs4 import BeautifulSoup
 from time import mktime
-from datetime import datetime
+from datetime import datetime, date
 
 
 manager = Manager(app)
@@ -27,12 +28,27 @@ def update_db_from_rss():
   """
   Grabs RSS feed from CL and updates DB from it
   """
+  today = date.today()
   url = 'https://newyork.craigslist.org/search/jjj?query=unpaid&sort=rel&format=rss'
-  import pdb
-  pdb.set_trace()
-  feed = feedparser.parse(url)
+  #url = 'https://govlab.github.io/6109/rss.xml'
+
+  cached_feed = CachedFeed.query.filter_by(rss_url=url, date=today).first()
+  if not cached_feed:
+    resp = requests.get(url)
+    cached_feed = CachedFeed(rss_url=url, text=resp.text)
+    db.session.add(cached_feed)
+    db.session.commit()
+
+  feed = feedparser.parse(cached_feed.text)
+
   for entry in feed.entries[0:2]:
     link = entry['link']
+
+    # Skip postings that already exist when scanning
+    posting = Posting.query.filter_by(url=link, rss_url=url).first()
+    if posting:
+      continue
+
     posting_resp = requests.get(link)
     posting_soup = BeautifulSoup(posting_resp.text)
 
@@ -56,6 +72,9 @@ def update_db_from_rss():
                       email_body='default_body')
 
     db.session.add(posting)
+
+    print(u"finished {}, sleeping".format(link))
+    time.sleep(4)
 
   db.session.commit()
 
