@@ -22,6 +22,13 @@ module.exports = function(grunt) {
         ],
         bowerOptions: {
           relative: false
+        },
+        mainFiles: {
+          'bootstrap-table': [
+            "src/bootstrap-table.css",
+            "src/bootstrap-table.js",
+            "src/locale/bootstrap-table-en-US.js"
+          ]
         }
       }
     }
