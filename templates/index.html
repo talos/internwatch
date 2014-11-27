@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+{% for posting in postings %}
+  <table>
+    <tr>
+      <td>
+        <a href="{{ url_for('posting', posting_id=posting.id) }}">{{ posting.title }}</a>
+      </td>
+      <td>{{ posting.text }}</td>
+    </tr>
+  </table>
+{% endfor %}
+
+{% endblock body %}

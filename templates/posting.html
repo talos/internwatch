@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<div>
+  <div>{{ posting.title }}</div>
+  <div>{{ posting.text|safe }}</div>
+  <form action="{{ url_for('posting', posting_id=posting.id) }}" method="POST">
+    {{ email_response.hidden_tag() }}
+
+    <div>
+      {{ email_response.email.errors }}
+      {{ email_response.email() }}
+    </div>
+
+    <div>
+      {{ email_response.email_subject.errors }}
+      {{ email_response.email_subject() }}
+    </div>
+
+    <div>
+      {{ email_response.email_body.errors }}
+      {{ email_response.email_body() }}
+    </div>
+
+    <div>
+      <button type="submit" name="save" value="save">Save</button>
+      <button type="submit" name="send_email" value="send_email">Send Email</button>
+    </div>
+  </form>
+  <form action="{{ url_for('ignore_posting', posting_id=posting.id) }}" method="POST">
+    <button name="ignore">Ignore Posting</button>
+  </form>
+</div>
+
+{% endblock body %}
