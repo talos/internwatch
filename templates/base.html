@@ -2,21 +2,28 @@
   <head>
     <title>internwatch</title>
     {% block head %}
+    <link type="text/css" rel="stylesheet" href="/static/build/css/internwatch.css" />
+    <script src="/static/build/js/internwatch.js"></script>
+    <script>
+      BootstrapTable.DEFAULTS.languages = "en";
+    </script>
     {% endblock %}
   </head>
   <body>
-    <a href="{{ url_for('index') }}">internwatch</a>
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul class="flashes">
-        {% for message in messages %}
-          <li>{{ message }}</li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+    <div class="container">
+      <a href="{{ url_for('index') }}">internwatch</a>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul class="flashes">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
 
-    {% block body %}
-    {% endblock body %}
+      {% block body %}
+      {% endblock body %}
+    </div>
   </body>
 </html>
