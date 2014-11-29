@@ -30,7 +30,6 @@ def update_db_from_rss():
   """
   today = date.today()
   url = 'https://newyork.craigslist.org/search/jjj?query=unpaid&sort=rel&format=rss'
-  #url = 'https://govlab.github.io/6109/rss.xml'
 
   cached_feed = CachedFeed.query.filter_by(rss_url=url, date=today).first()
   if not cached_feed:
@@ -41,7 +40,7 @@ def update_db_from_rss():
 
   feed = feedparser.parse(cached_feed.text)
 
-  for entry in feed.entries[0:2]:
+  for entry in feed.entries:
     link = entry['link']
 
     # Skip postings that already exist when scanning
@@ -74,7 +73,7 @@ def update_db_from_rss():
     db.session.add(posting)
 
     print(u"finished {}, sleeping".format(link))
-    time.sleep(4)
+    time.sleep(15)
 
   db.session.commit()
 
