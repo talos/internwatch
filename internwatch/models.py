@@ -1,6 +1,7 @@
 from flask.ext.sqlalchemy import SQLAlchemy
 
 from internwatch.forms import EmailResponse
+from internwatch.utils import send_email
 
 from datetime import datetime, date
 
@@ -34,21 +35,24 @@ class Posting(db.Model):
   email_responded_at = db.Column(db.DateTime())
   posted_online_at = db.Column(db.DateTime())
 
-  def modify_email(self, new_subject, new_body, new_email):
-    self.email = new_email
-    self.email_subject = new_subject
-    self.email_body = new_body
-
   def send_email(self):
-    self.email_sent_at = datetime.now()
+    if self.can_send:
+      send_email(self.email, self.email_subject, self.email_body)
+      self.email_sent_at = datetime.now()
+    else:
+      pass
 
   def ignore(self):
     self.ignored_at = datetime.now()
 
   @property
+  def can_send(self):
+    return self.email and self.email_subject and self.email_body and \
+        not self.email_sent_at
+
+  @property
   def email_response_form(self):
-    form = EmailResponse(obj=self)
-    return form
+    return EmailResponse(obj=self)
 
   @property
   def status(self):

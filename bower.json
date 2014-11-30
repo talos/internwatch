@@ -1,0 +1,23 @@
+{
+  "name": "internwatch",
+  "version": "0.0.1",
+  "homepage": "https://github.com/talos/internwatch",
+  "authors": [
+    "John Krauss <irving.krauss@gmail.com>"
+  ],
+  "description": "notify posters of questionable internships",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-table": "~1.4.0",
+    "bootstrap": "~3.3.1",
+    "bootstrap3-wysihtml5-bower": "~0.3.3"
+  }
+}

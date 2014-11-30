@@ -12,6 +12,16 @@ module.exports = function(grunt) {
         dest: 'build/<%= pkg.name %>.min.js'
       }
     },
+    copy: {
+      all: {
+        files: [{
+          expand: true,
+          src: ['bower_components/bootstrap/dist/fonts/*'],
+          dest: 'static/build/fonts/',
+          flatten: true
+        }]
+      }
+    },
     bower_concat: {
       all: {
         dest: 'static/build/js/internwatch.js',
@@ -36,10 +46,11 @@ module.exports = function(grunt) {
 
   // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-bower-concat');
 
   // Default task(s).
   //grunt.registerTask('default', ['uglify']);
 
-  grunt.registerTask('default', ['bower_concat']);
+  grunt.registerTask('default', ['bower_concat', 'copy']);
 };

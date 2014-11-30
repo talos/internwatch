@@ -1,3 +1,4 @@
+from flask import current_app
 from flask.ext.script import Manager
 
 from app import app
@@ -19,6 +20,18 @@ manager = Manager(app)
 def drop_and_create_db():
   db.drop_all()
   db.create_all()
+
+
+@manager.command
+def update_email_contents():
+  """
+  Update all emails' contents
+  """
+  for posting in Posting.query.all():
+    posting.email_subject = posting.title
+    posting.email_body = current_app.config['EMAIL_DEFAULT_BODY']
+    db.session.add(posting)
+  db.session.commit()
 
 
 @manager.command
@@ -59,16 +72,18 @@ def update_db_from_rss():
     contact_soup = BeautifulSoup(contact_resp.text)
 
     anonemail_el = contact_soup.find(class_="anonemail")
+    title = posting_soup.find('title').text
 
-    posting = Posting(title=posting_soup.find('title').text,
+    posting = Posting(title=title,
                       url=link,
                       rss_url=url,
                       text=unicode(posting_soup.find(id='postingbody')),
                       region='nyc',
                       posted_at = datetime.fromtimestamp(mktime(entry.published_parsed)),
                       email=anonemail_el.text if anonemail_el else None,
-                      email_subject='default subject',
-                      email_body='default_body')
+                      email_subject=title,
+                      email_body=current_app.config['EMAIL_DEFAULT_BODY']
+                     )
 
     db.session.add(posting)
 
