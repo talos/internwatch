@@ -7,17 +7,19 @@
     {% endblock %}
   </head>
   <body>
+
+    {% include "nav.html" %}
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flashes col-xs-12 error list-unstyled bg-danger">
+        {% for message in messages %}
+          <li class="warning">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
     <div class="container">
-      <a href="{{ url_for('index') }}">internwatch</a>
-      {% with messages = get_flashed_messages() %}
-        {% if messages %}
-          <ul class="flashes">
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-          </ul>
-        {% endif %}
-      {% endwith %}
 
       {% block body %}
       {% endblock body %}

@@ -7,6 +7,8 @@ from html2text import html2text
 
 
 def send_email(toaddr, subject, html):
+  html = html.encode('ascii', "xmlcharrefreplace")
+
   # TODO deleteme
   toaddr = 'irving.krauss@gmail.com'
 

@@ -4,6 +4,7 @@ from internwatch.forms import EmailResponse
 from internwatch.utils import send_email
 
 from datetime import datetime, date
+import re
 
 
 db = SQLAlchemy()
@@ -44,6 +45,11 @@ class Posting(db.Model):
 
   def ignore(self):
     self.ignored_at = datetime.now()
+
+  @property
+  def text_stripped(self):
+    """Strip erroneous linebreak close tags"""
+    return re.sub(r'</br[^>]*>', '', self.text)
 
   @property
   def can_send(self):

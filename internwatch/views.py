@@ -17,6 +17,7 @@ def register_routes(app):
   def posting(posting_id):
     posting = Posting.query.filter_by(id=posting_id).first_or_404()
     email_response = posting.email_response_form
+    confirm = ConfirmSendEmail()
     if email_response.validate_on_submit():
       email_response.populate_obj(posting)
 
@@ -25,14 +26,11 @@ def register_routes(app):
         db.session.commit()
         flash("Changes saved!")
 
-      if request.form.get('send_email'):
-        return redirect(url_for('send_email', posting_id=posting.id))
-
     if email_response.errors:
       flash("Could not save, check errors")
 
     return render_template('posting.html', posting=posting,
-                           email_response=email_response)
+                           confirm=confirm, email_response=email_response)
 
   @app.route('/posting/<posting_id>/ignore', methods=['POST'])
   def ignore_posting(posting_id):
@@ -42,7 +40,7 @@ def register_routes(app):
     db.session.commit()
     return redirect(url_for('index'))
 
-  @app.route('/posting/<posting_id>/send_email', methods=['GET', 'POST'])
+  @app.route('/posting/<posting_id>/send_email', methods=['POST'])
   def send_email(posting_id):
     posting = Posting.query.filter_by(id=posting_id).first_or_404()
     form = ConfirmSendEmail()
@@ -52,5 +50,6 @@ def register_routes(app):
         db.session.add(posting)
         db.session.commit()
         flash('Email sent!')
-      return redirect(url_for('posting', posting_id=posting_id))
-    return render_template('confirm_send_email.html', posting=posting, form=form)
+    else:
+      flash('Could not send email')
+    return redirect(url_for('posting', posting_id=posting_id))
