@@ -2,7 +2,19 @@
 
 {% block body %}
 
-<table class="table" data-toggle="table" data-sort-name="date" data-sort-order="desc" data-pagination="true" data-search="true">
+<div id="toolbar" class="btn-group">
+  <a href="?show=pending" class="btn btn-default">
+    <i class="glyphicon glyphicon-plus"></i>
+  </a>
+  <a href="?show=sent" class="btn btn-default">
+    <i class="glyphicon glyphicon-heart"></i>
+  </a>
+  <a href="?show=ignored" class="btn btn-default">
+    <i class="glyphicon glyphicon-trash"></i>
+  </a>
+</div>
+
+<table class="table" data-toggle="table" data-sort-name="date" data-sort-order="desc" data-pagination="true" data-search="true" data-toolbar="#toolbar">
   <thead>
     <tr>
       <th data-field="date" data-sortable="true">Date</th>
@@ -12,7 +24,9 @@
     </tr>
   </thead>
   {% for posting in postings %}
-    <tr>
+    {% set status = posting.status %}
+    {% set Status = posting.Status %}
+    <tr class="{% if status == Status.SENT %}success{% elif status == Status.IGNORED %}warning{% endif %}">
       <td class="col-xs-1">{{ posting.posted_at }}</td>
       <td class="col-xs-1">{{ posting.status }}</td>
       <td class="col-xs-1">

@@ -7,8 +7,8 @@ def register_routes(app):
 
   @app.route('/', methods=['GET'])
   def index():
-    if request.args.get('show') == 'all':
-      postings = Posting.query.all()
+    if request.args.get('show'):
+      postings = Posting.query.filter_by(status=request.args['show']).all()
     else:
       postings = Posting.pending().all()
     return render_template('index.html', postings=postings)
