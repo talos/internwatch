@@ -62,15 +62,17 @@ class Posting(db.Model):
 
   @property
   def status(self):
-    if self.email_sent_at:
-      return self.Status.SENT
     if self.ignored_at:
       return self.Status.IGNORED
+    if self.email_sent_at:
+      return self.Status.SENT
     return self.Status.PENDING
 
   @classmethod
-  def pending(cls, **kwargs):
-    return cls.query.filter_by(ignored_at=None, email_sent_at=None, **kwargs)
+  def all_with_status(cls, status):
+    for m in cls.query.all():
+      if m.status == status:
+        yield m
 
 
 class CachedFeed(db.Model):

@@ -3,13 +3,13 @@
 {% block body %}
 
 <div id="toolbar" class="btn-group">
-  <a href="?show=pending" class="btn btn-default">
-    <i class="glyphicon glyphicon-plus"></i>
+  <a href="?show=pending" class="btn btn-default {% if show == "pending" %}active {% endif %}">
+    <i class="glyphicon glyphicon-envelope"></i>
   </a>
-  <a href="?show=sent" class="btn btn-default">
-    <i class="glyphicon glyphicon-heart"></i>
+  <a href="?show=sent" class="btn btn-default {% if show == "sent" %}active {% endif %}">
+    <i class="glyphicon glyphicon-ok"></i>
   </a>
-  <a href="?show=ignored" class="btn btn-default">
+  <a href="?show=ignored" class="btn btn-default {% if show == "ignored" %}active {% endif %}">
     <i class="glyphicon glyphicon-trash"></i>
   </a>
 </div>
