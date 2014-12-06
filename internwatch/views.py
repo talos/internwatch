@@ -38,6 +38,14 @@ def register_routes(app):
     db.session.commit()
     return redirect(url_for('index'))
 
+  @app.route('/posting/<posting_id>/unignore', methods=['POST'])
+  def unignore_posting(posting_id):
+    posting = Posting.query.filter_by(id=posting_id).first_or_404()
+    posting.unignore()
+    db.session.add(posting)
+    db.session.commit()
+    return redirect(url_for('posting', posting_id=posting_id))
+
   @app.route('/posting/<posting_id>/send_email', methods=['POST'])
   def send_email(posting_id):
     posting = Posting.query.filter_by(id=posting_id).first_or_404()

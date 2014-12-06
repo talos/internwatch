@@ -46,6 +46,9 @@ class Posting(db.Model):
   def ignore(self):
     self.ignored_at = datetime.now()
 
+  def unignore(self):
+    self.ignored_at = None
+
   @property
   def text_stripped(self):
     """Strip erroneous linebreak close tags"""

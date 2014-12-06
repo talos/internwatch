@@ -6,62 +6,44 @@
 
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#posting" aria-controls="home" role="tab" data-toggle="tab">Posting</a></li>
-    <li role="presentation"><a href="#response" aria-controls="profile" role="tab" data-toggle="tab">Response</a></li>
-    <li role="presentation"><a href="#resolution" aria-controls="messages" role="tab" data-toggle="tab">Resolution</a></li>
+    <li role="presentation" class="active"><a id="posting-tab" href="#posting" aria-controls="posting" role="tab" data-toggle="tab">Posting</a></li>
+    <li role="presentation"><a id="response-tab" href="#response" aria-controls="response" role="tab" data-toggle="tab">Response</a></li>
+    <li role="presentation"><a id="resolution-tab" href="#resolution" aria-controls="resolution" role="tab" data-toggle="tab">Resolution</a></li>
   </ul>
 
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="posting">
       <h5><a href="{{ posting.url }}" target="_blank">{{ posting.title }}</a></h5>
       <iframe frameborder="0" class="col-xs-12" src="data:text/html;charset=utf-8,{{ posting.text_stripped|urlencode }}" style="height:400px;"></iframe>
-      <form role="form" action="{{ url_for('ignore_posting', posting_id=posting.id) }}" method="POST">
-        <button class="btn btn-danger" name="ignore">Ignore Posting</button>
-      </form>
+      {% if posting.status == posting.Status.PENDING %}
+        <form role="form" action="{{ url_for('ignore_posting', posting_id=posting.id) }}" method="POST">
+          <button class="btn btn-danger" name="ignore">Ignore Posting</button>
+        </form>
+      {% endif %}
     </div>
 
     <div role="tabpanel" class="tab-pane" id="response">
-      <form role="form" class="" action="{{ url_for('posting', posting_id=posting.id) }}" method="POST">
-        <h3>Respond by email</h3>
-        {{ email_response.hidden_tag() }}
-  
-        <div class="form-group {% if email_response.email.errors %}has-error{% endif %}">
-          {{ email_response.email.label(class_="control-label") }}
-          {{ email_response.email(class_="form-control") }}
-          <ul class="list-unstyled">
-            {% for error in email_response.email.errors %}
-            <li class="text-danger">{{ error }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-  
-        <div class="form-group {% if email_response.email_subject.errors %}has-error{% endif %}">
-          {{ email_response.email_subject.label(class_="control-label") }}
-          {{ email_response.email_subject(class_="form-control") }}
-          <ul class="list-unstyled">
-            {% for error in email_response.email_subject.errors %}
-            <li class="text-danger">{{ error }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-  
-        <div class="form-group {% if email_response.email_body.errors %}has-error{% endif %}">
-          {{ email_response.email_body.label(class_="control-label") }}
-          {{ email_response.email_body(rows="10", class_="form-control") }}
-          <ul class="list-unstyled">
-            {% for error in email_response.email_body.errors %}
-            <li class="text-danger">{{ error }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-  
-        <div>
-          <button class="btn btn-default" type="submit" name="save" value="save">Save</button>
-          <button class="btn btn-link" type="button" data-toggle="modal" data-target="#confirmEmail">Send Email</button>
-        </div>
-      </form>
+      {% if posting.status == posting.Status.PENDING %}
+        {% include "respond.html" %}
+      {% elif posting.status == posting.Status.SENT %}
+        <h3>Response has been sent</h3>
+
+        <div><strong>Subject:</strong> {{ posting.email_subject }}</div>
+        <div><strong>Body:</strong> <iframe frameborder="0" class="col-xs-12" src="data:text/html;charset=utf-8,{{ posting.email_body|urlencode }}" style="height:500px;"></iframe></div>
+      {% elif posting.status == posting.Status.IGNORED %}
+        <form role="form" action="{{ url_for('unignore_posting', posting_id=posting.id) }}" method="POST">
+          <h3>This post was ignored</h3>
+
+          <div>If you think it should be responded to, you can unignore it.</div>
+          <div><button class="btn btn-danger" type="submit">Unignore</button></div>
+        </form>
+      {% endif %}
+
     </div>
     <div role="tabpanel" class="tab-pane" id="resolution">
+      {% if posting.email_sent_at != None %}
+        <div>Email was sent to {{ posting.email }} on {{ posting.email_sent_at }}</div>
+      {% endif %}
     </div>
   </div>
 </div>
@@ -89,5 +71,10 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<script>
+  if (window.location.hash) {
+    $('#' + window.location.hash.substr(1) + '-tab').tab('show');
+  }
+</script>
 
 {% endblock body %}

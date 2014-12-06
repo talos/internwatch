@@ -1,0 +1,39 @@
+<form role="form" action="{{ url_for('posting', posting_id=posting.id) }}#response" method="POST">
+  <h3>Respond by email</h3>
+  {{ email_response.hidden_tag() }}
+
+  <div class="form-group {% if email_response.email.errors %}has-error{% endif %}">
+    {{ email_response.email.label(class_="control-label") }}
+    {{ email_response.email(class_="form-control") }}
+    <ul class="list-unstyled">
+      {% for error in email_response.email.errors %}
+      <li class="text-danger">{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="form-group {% if email_response.email_subject.errors %}has-error{% endif %}">
+    {{ email_response.email_subject.label(class_="control-label") }}
+    {{ email_response.email_subject(class_="form-control") }}
+    <ul class="list-unstyled">
+      {% for error in email_response.email_subject.errors %}
+      <li class="text-danger">{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="form-group {% if email_response.email_body.errors %}has-error{% endif %}">
+    {{ email_response.email_body.label(class_="control-label") }}
+    {{ email_response.email_body(rows="10", class_="form-control") }}
+    <ul class="list-unstyled">
+      {% for error in email_response.email_body.errors %}
+      <li class="text-danger">{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div>
+    <button class="btn btn-default" type="submit" name="save" value="save">Save</button>
+    <button class="btn btn-link" type="button" data-toggle="modal" data-target="#confirmEmail">Send Email</button>
+  </div>
+</form>
